@@ -114,15 +114,37 @@ export default function HomePage() {
     setDraggingGear(null);
   };
 
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    if (draggingGear) {
+      const touch = e.touches[0];
+      console.log(touch);
+      setGears((prevGears) =>
+        prevGears.map((gear) =>
+          gear.id === draggingGear
+            ? { ...gear, x: touch.clientX, y: touch.clientY }
+            : gear
+        )
+      );
+    }
+  }, [draggingGear]);
+
+  const handleTouchEnd = () => {
+    setDraggingGear(null);
+  };
+
   useEffect(() => {
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("touchmove", handleTouchMove);
+    window.addEventListener("touchend", handleTouchEnd);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
     };
-  }, [draggingGear, handleMouseMove]);
+  }, [draggingGear, handleMouseMove, handleTouchMove]);
 
   return (
     <div
